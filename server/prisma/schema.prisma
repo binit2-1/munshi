@@ -17,8 +17,23 @@ model ProductDetails {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   userId        String
+  productStocks CurrentStock[]
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model CurrentStock {
+  id        String         @id @default(uuid())
+  productId String         @unique
+  product   ProductDetails @relation(fields: [productId], references: [id])
+  quantity  Int
+  userId   String
+  User     User           @relation(fields: [userId], references: [id])
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([productId])
+}
+
 
 model User {
   id            String    @id
@@ -31,6 +46,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   productDetails ProductDetails[]
+  currentStocks  CurrentStock[]
 
   @@unique([email])
   @@map("user")
