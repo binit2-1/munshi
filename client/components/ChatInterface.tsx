@@ -25,6 +25,7 @@ import { THEME } from '@/lib/theme';
 import { MicrophoneIcon, StopIcon } from 'phosphor-react-native';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { playBase64Wav } from '@/lib/playBase64Audio';
+import { makeAuthenticatedRequest } from '@/lib/authenticatedRequest';
 
 const { width, height } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -103,17 +104,9 @@ const handleMicToggle = async () => {
 
     setSending(true);
 
-    const response = await fetch(`${BACKEND_URL}/ai/audio/response`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        audio: base64,
-      }),
+    const result = await makeAuthenticatedRequest('/ai/audio/response', {
+      audio: base64,
     });
-
-    const result = await response.json();
 
     if (result.success) {
       setInputText(result.data.transcript);
@@ -179,14 +172,7 @@ const handleMicToggle = async () => {
         setLoading(true);
       }
       
-      const url = new URL(`${BACKEND_URL}/ai/history`);
-      url.searchParams.append('limit', '20');
-      if (cursorDate) {
-        url.searchParams.append('cursor', cursorDate);
-      }
-      
-      const response = await fetch(url.toString());
-      const result = await response.json();
+      const result = await makeAuthenticatedRequest(`/ai/history${cursorDate ? `?cursor=${cursorDate}` : ''}`);
       
       if (result.success && result.data) {
         const formattedMessages: Message[] = [];
@@ -241,11 +227,8 @@ const handleMicToggle = async () => {
     setSending(true);
 
     try {
-      const url = new URL(`${BACKEND_URL}/ai/response`);
-      url.searchParams.append('input', userMessage.text);
       
-      const response = await fetch(url.toString());
-      const result = await response.json();
+      const result = await makeAuthenticatedRequest("/ai/response?input=" + encodeURIComponent(userMessage.text));
       
       if (result.success && result.data) {
         const aiMessage: Message = {
