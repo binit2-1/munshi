@@ -12,5 +12,27 @@ services:
     volumes:
       - munshi-data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:8.4-alpine
+    container_name: munshi-dev-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    # Optional: Command to ensure data is saved to disk regularly
+    command: redis-server --save 60 1 --loglevel warning
+  
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: munshi-dev-redis-insight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis-insight-data:/data
+
 volumes:
   munshi-data:
+  redis-data:
+  redis-insight-data:
