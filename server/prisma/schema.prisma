@@ -14,6 +14,11 @@ enum PaymentMethod {
   UPI
 }
 
+enum Sender {
+  USER
+  AGENT
+}
+
 model ProductDetails {
   id            String   @id @default(uuid())
   name          String
@@ -67,6 +72,26 @@ model Transaction {
   updatedAt     DateTime          @updatedAt
 }
 
+model message {
+  id        String   @id @default(uuid())
+  sender    Sender
+  message   String
+  chatId    String
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+  chat      chat     @relation(fields: [chatId], references: [id])
+  createdAt DateTime @default(now())
+
+}
+
+model chat {
+  id        String    @id @default(uuid())
+  messages  message[]
+  userId    String
+  User      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+}
+
 
 model User {
   id            String    @id
@@ -82,6 +107,8 @@ model User {
   currentStocks  CurrentStock[]
   transactionItems TransactionItem[]
   transactions   Transaction[]
+  messages       message[]
+  chats          chat[]
 
   @@unique([email])
   @@map("user")

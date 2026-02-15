@@ -243,7 +243,10 @@ async function getLowSellingProduct(filter: string, userId: string) {
         }
     
         const lowProductId = lowProducts[0]?.productId;
-        const lowProduct = await prisma.productDetails.findUnique({ where: { id: lowProductId } });
+        let lowProduct = null;
+        if (lowProductId !== undefined) {
+            lowProduct = await prisma.productDetails.findUnique({ where: { id: lowProductId } });
+        }
         const unitsSold = lowProducts[0]?._sum?.quantity || 0;
         return { name: lowProduct?.name || null, unitsSold };
     } catch (error) {
