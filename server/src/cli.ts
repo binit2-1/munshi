@@ -2,6 +2,8 @@
 import "dotenv/config";
 import { prisma } from "./exports/prisma";
 
+
+
 const commands = {
   "get-products": getProducts,
   "get-stock": getStock,
@@ -12,6 +14,7 @@ const commands = {
   "get-low-stock": getLowStock,
   "get-expiring": getExpiring,
   "get-top-selling": getTopSelling,
+  "get-low-selling": getLowSelling,
   "get-payment-breakdown": getPaymentBreakdown,
   "create-product": createProduct,
   "update-product": updateProduct,
@@ -404,6 +407,48 @@ async function getTopSelling(args: string[]) {
   };
 }
 
+async function getLowSelling(args: string[]) {
+  const userId = args[0];
+  if (!userId) {
+    return { error: "User ID is required" };
+  }
+  const limit = args[1] ? parseInt(args[1]) : 10;
+  
+  const lowProducts = await prisma.transactionItem.groupBy({
+    where: { userId },
+    by: ['productId'],
+    _sum: { quantity: true },
+    orderBy: { _sum: { quantity: 'asc' } },
+    take: limit,
+  });
+  
+  const productsWithDetails = await Promise.all(
+    lowProducts.map(async (item) => {
+      const product = await prisma.productDetails.findUnique({
+        where: { id: item.productId, userId: userId },
+        select: {
+          id: true,
+          name: true,
+          productStocks: {
+            select: {
+              quantity: true,
+            },
+          },
+        },
+      });
+      return {
+        product,
+        totalSold: item._sum.quantity,
+      };
+    })
+  );
+  
+  return {
+    count: productsWithDetails.length,
+    lowSelling: productsWithDetails,
+  };
+}
+
 async function getPaymentBreakdown(args: string[]) {
   const userId = args[0];
   if (!userId) {
@@ -611,6 +656,7 @@ function showHelp() {
       "get-low-stock <userId> [threshold]": "Get low stock items (default threshold: 10)",
       "get-expiring <userId> [days]": "Get expiring products (default: 30 days)",
       "get-top-selling <userId> [limit]": "Get top selling products (default: 10)",
+      "get-low-selling <userId> [limit]": "Get low selling products (default: 10)",
       "get-payment-breakdown <userId> [days]": "Get payment method breakdown (default: 30 days)",
       "create-product <userId> <name> <purchasePrice> <sellingPrice> <expiryDate> [initialStock]": "Create a new product",
       "update-product <userId> <productId> <field=value> ...": "Update product details",
@@ -628,6 +674,7 @@ function showHelp() {
       "node dist/cli.js create-product user123 'Rice Bag' 50 75 2026-12-31 100",
       "node dist/cli.js update-product user123 abc123 sellingPrice=80",
       "node dist/cli.js update-stock user123 abc123 150",
+      "node dist/cli.js get-low-selling user123 10",
       "node dist/cli.js delete-product user123 abc123",
     ],
   };

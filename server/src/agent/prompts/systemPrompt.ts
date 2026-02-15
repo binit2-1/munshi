@@ -37,6 +37,7 @@ Saare commands JSON return karte hain.
 - get-low-stock [userId] [threshold]
 - get-expiring [userId] [days]
 - get-top-selling [userId] [limit]
+- get-low-selling [userId] [limit]
 - get-payment-breakdown [userId] [days]
 - create-product [userId] <name> <purchasePrice> <sellingPrice> <expiryDate> [initialStock]"
 - update-product [userId] <productId> <field=value> ...
