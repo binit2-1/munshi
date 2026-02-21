@@ -9,8 +9,8 @@ const calculateAnalytics = (currentRows: any[], previousRows: any[]) => {
     let percentageChange = 0;
     if (prevSum > 0) {
         percentageChange = +(((currentSum - prevSum) / prevSum) * 100).toFixed(1);
-    } else if (currentSum > 0) {
-        percentageChange = 100;
+    } else {
+        percentageChange = 0;
     }
 
     return {
@@ -130,8 +130,9 @@ async function getSalesAnalyticsByMonth(userId: string) {
     }
 
     // Previous period: 12 months before current period
-    for (let i = 23; i >= 12; i--) {
-        const date = new Date(currentYear, currentMonth - 1 - i, 1);
+    for (let i = 1; i <= 12; i++) {
+        const monthOffset = -12 - i;
+        const date = new Date(currentYear, currentMonth - 1 + monthOffset, 1);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         

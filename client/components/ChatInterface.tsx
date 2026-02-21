@@ -258,7 +258,7 @@ const ChatInterface = ({ open, onClose, onOpenScan }: ChatInterfaceProps) => {
         <Text
           className="mb-6 text-[64px] font-normal tracking-[-0.4rem]"
           style={{ color: THEME[mode].background }}>
-          Hi binit,{`\n`}How can I help{`\n`}you today?
+          Hi,{`\n`}How can I help{`\n`}you today?
         </Text>
 
         {/* Bento cards */}
