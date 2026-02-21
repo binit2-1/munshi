@@ -4,12 +4,11 @@
   <img src="assets/logo-munshi.jpeg" height="80" alt="Munshi Logo" />
 </p>
 
-<div align="center">
-  <video width="300" controls playsinline poster="assets/logo-munshi.jpeg">
-    <source src="assets/demo.mp4" type="video/mp4" />
-    Your browser does not support the video tag. Download it here: <a href="assets/demo.mp4">demo.mp4</a>
-  </video>
-</div>
+
+
+https://github.com/user-attachments/assets/75c2a046-5561-49c0-b8e7-580714a4ced5
+
+
 
 <p align="center">
   <b>Aapke dukaan ka Munshi</b>
