@@ -4,6 +4,10 @@
   <img src="assets/logo-munshi.jpeg" height="80" alt="Munshi Logo" />
 </p>
 
+<div align="center">
+  <video src="assets/demo.mp4" width="300" autoplay playsinline />
+</div>
+
 <p align="center">
   <b>Aapke dukaan ka Munshi</b>
 </p>
